@@ -1,5 +1,5 @@
 # Anti-Cookies-Consent-userscript
-Remove Cookies Consent Modal Windows from WebSites
+Remove cookie consent messages from websites
 
 ![Image](https://github.com/WakeupNeo33/Anti-Cookies-Consent-userscript/raw/main/icon.png)
 
