@@ -21,7 +21,7 @@
 
 	var enable_debug = true;
 
-    // Anti-AdBlocker Pattern to Search
+    // Pattern to Search
     var cookies_pattern = /cookies/i;
 
     var tagNames_pattern = /div|section|iframe/i;
@@ -128,7 +128,7 @@
         // Hide the element through a high priority incorporating the sentence in the style parameter
         el.setAttribute('style', (el.getAttribute('style')||'') + ';display: none !important;');
 
-        // Also, add the random class name to the element
+        // Also, a class name to the element
         // (in case there is a script that eliminates the previous statement)
         el.classList.add( 'hide_modal' );
 
@@ -165,7 +165,7 @@
                         // skip unusual html tag names
                         if ( !tagNames_pattern.test ( el.tagName ) ) return;
 
-                        // Check if element is an Anti-Adblock Modal Windows
+                        // Check if element is a Modal Windows
                         if ( isModalWindows( el ) )
                         {
                             debug( 'OnMutationObserver: ', el );
