@@ -2,7 +2,7 @@
 // @name            Anti-Cookies Consent
 // @name:es         Anti-Consentimiento de Cookies
 // @namespace       Anti-Cookies-Consent
-// @version         1.1
+// @version         1.2
 // @description     Remove Cookies Consent Modal Windows
 // @description:es  Eliminar los mensajes de consentimiento de cookies de los sitios web
 // @author          Elwyn
@@ -22,10 +22,9 @@
     var enable_debug = false;
 
     // Pattern to Search
-    var cookies_pattern = /cookie/i;
-    //var others_pattern = //i;
+    var cookies_pattern = /cookies/i;
 
-    var tagNames_pattern = /div|section|iframe/i;
+    var tagNames_pattern = /div|p|section|iframe/i;
 
     document.html = document.getElementsByTagName('html')[0];
 
@@ -37,7 +36,7 @@
         if ( val !== undefined )
         {
             if ( val.nodeType === Node.ELEMENT_NODE ) {
-                console.log ( 'TagName: ' + val.tagName + ' | Id: ' + val.id + ' | Class: ' + val.classList );
+                console.log ( 'TagName: ' + val.nodeName + ' | Id: ' + val.id + ' | Class: ' + val.classList );
             } else {
                 console.log ( val );
             }
@@ -108,7 +107,7 @@
         var childFound = false;
         Array.prototype.forEach.call( el.childNodes, ( child ) => {
             // skip unusual html tag names
-            if ( !tagNames_pattern.test ( child.tagName ) ) return;
+            if ( !tagNames_pattern.test ( child.nodeName ) ) return;
             // Check if some child element is full size window
             if(isFullWindows( child )){
                 childFound = true;
@@ -119,17 +118,11 @@
 
     function isModalWindows( el )
     {
-        /*
-        var style = window.getComputedStyle( el );
-        var bottom = parseInt( style.getPropertyValue( 'bottom' ) );
-        return isElementFixed( el ) && ( cookies_pattern.test( el.textContent ) || el.tagName == 'IFRAME' || (others_pattern.test( el.textContent ) && (isFullWindows( el ) || el.offsetHeight > 150 || bottom == 0 || isChildrenFullWindows( el ) )) );
-        */
-        return (isElementFixed( el ) && ( cookies_pattern.test( el.textContent ) || el.tagName == 'IFRAME' ) );
+        return (isElementFixed( el ) && ( cookies_pattern.test( el.textContent ) || el.nodeName == 'IFRAME' ) );
     }
 
     function unblockScroll()
     {
-        //var htmlTag = document.getElementsByTagName('html')[0];
         if ( isOverflowHidden( document.body ) )
         {
             document.body.setAttribute('style', (document.body.getAttribute('style')||'').replace('overflow: visible !important;','') + 'overflow: visible !important;');
@@ -148,16 +141,19 @@
     function removeBackStuff()
     {
         document.querySelectorAll( 'div,section' ).forEach( ( el ) => {
-            if ( isBlackoutModal( el ) )
+            if ( tagNames_pattern.test( el.nodeName ) )
             {
-                debug( 'Blackout Modal Detected & Removed: ', el);
-                el.setAttribute('style', (el.getAttribute('style')||'') + ';display: none !important;');
-                el.classList.add( 'hide_modal' );
-            }
-            else if ( isElementBlur( el ) )
-            {
-                debug( 'Blur Element Detected & Deblurred: ', el);
-                el.classList.add( 'un_blur' );
+                if ( isBlackoutModal( el ) )
+                {
+                    debug( 'Blackout Modal Detected & Removed: ', el);
+                    el.setAttribute('style', (el.getAttribute('style')||'') + ';display: none !important;');
+                    el.classList.add( 'hide_modal' );
+                }
+                else if ( isElementBlur( el ) )
+                {
+                    debug( 'Blur Element Detected & Deblurred: ', el);
+                    el.classList.add( 'un_blur' );
+                }
             }
         });
         setTimeout( unblockScroll, 500);
@@ -169,10 +165,13 @@
         var modalFound = false;
         // Only check common used html tag names
         document.querySelectorAll( 'div,section,iframe' ).forEach( ( el ) => {
-            if ( isModalWindows( el ) && isNotHidden( el ) )
+            if ( tagNames_pattern.test( el.nodeName ) )
             {
-                modalFound = true;
-                removeModal( el );
+                if ( isModalWindows( el ) && isNotHidden( el ) )
+                {
+                    modalFound = true;
+                    removeModal( el );
+                }
             }
         });
 
@@ -215,7 +214,7 @@
                 if ( mutation.addedNodes.length ) {
                     Array.prototype.forEach.call( mutation.addedNodes, ( el ) => {
                         // skip unusual html tag names
-                        if ( !tagNames_pattern.test ( el.tagName ) ) return;
+                        if ( !tagNames_pattern.test ( el.nodeName ) ) return;
 
                         // Check if element is a Modal Windows
                         if ( isModalWindows( el ) && isNotHidden( el ) )
@@ -236,17 +235,18 @@
         // enable context menu again
         enableContextMenu();
 
-        // First check with a little delay
-        setTimeout( function() {
-            checkModals();
-        }, 100 );
-
         addStyle( 'body.scroll_on, html.scroll_on { overflow: visible !important; } .hide_modal { display: none !important; } .un_blur { -webkit-filter: blur(0px) !important; filter: blur(0px) !important; }' );
+
+        // First check
+        checkModals();
 
     });
 
     window.addEventListener('load', (event) => {
-        checkModals();
+        setTimeout( function() {
+            checkModals();
+        }, 100 );
     });
+
 
 })();
