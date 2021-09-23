@@ -2,7 +2,7 @@
 // @name            Anti-Cookies Consent
 // @name:es         Anti-Consentimiento de Cookies
 // @namespace       Anti-Cookies-Consent
-// @version         1.2
+// @version         1.2.1
 // @description     Remove Cookies Consent Modal Windows
 // @description:es  Eliminar los mensajes de consentimiento de cookies de los sitios web
 // @author          Elwyn
@@ -13,6 +13,7 @@
 // @updateURL       https://github.com/WakeupNeo33/Anti-Cookies-Consent-userscript/raw/main/anti-cookies-consent.user.js
 // @iconURL         https://github.com/WakeupNeo33/Anti-Cookies-Consent-userscript/raw/main/icon.png
 // @include         *
+// @exclude         https://*mega.nz/*
 // @noframes
 // @run-at          document-start
 // @grant           unsafeWindow
